@@ -63,19 +63,11 @@ jobs:
           git push || true
           
       - name: Create GitHub Release
-        if: success()
+        if: steps.artifacts.outputs.found == 'true'
         uses: softprops/action-gh-release@v2
         with:
           tag_name: "v${{ steps.version.outputs.version }}"
           name: "sysc-greet ${{ steps.version.outputs.version }}"
-          body: |
-            Automated Debian packages for sysc-greet ${{ steps.version.outputs.version }}.
-
-            Includes:
-            - sysc-greet
-            - sysc-greet-configs
-
-            Built automatically from upstream tag v${{ steps.version.outputs.version }}.
           files: |
             build/*.deb
             build/*.changes
