@@ -1,0 +1,39 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+SRC="/usr/share/sysc-greet/configs"
+
+echo "sysc-greet config installer"
+echo
+echo "Available configs:"
+ls "$SRC"
+echo
+echo "Choose destination:"
+echo "  1) ~/.config/sysc-greet/configs (user)"
+echo "  2) /etc/greetd (system, requires sudo)"
+echo
+read -rp "Selection [1/2]: " choice
+
+case "$choice" in
+  1)
+    DEST="$HOME/.config/sysc-greet/configs"
+    mkdir -p "$DEST"
+    cp -av "$SRC/." "$DEST/"
+    ;;
+  2)
+    if [[ $EUID -ne 0 ]]; then
+      echo "ERROR: Must run as root for /etc/greetd"
+      exit 1
+    fi
+    mkdir -p /etc/greetd
+    cp -av "$SRC/." /etc/greetd/
+    ;;
+  *)
+    echo "Invalid selection"
+    exit 1
+    ;;
+esac
+
+echo
+echo "Done."
+echo "Review configs before enabling greetd."

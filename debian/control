@@ -1,0 +1,44 @@
+Source: sysc-greet
+Section: utils
+Priority: optional
+Maintainer: Kennwood <kenn@unknown>
+Build-Depends:
+ debhelper-compat (= 13),
+ golang-go
+Standards-Version: 4.7.0
+Rules-Requires-Root: no
+
+Package: sysc-greet
+Architecture: any
+Depends:
+ greetd,
+ kitty,
+ ${shlibs:Depends},
+ ${misc:Depends}
+Recommends:
+ gslapper
+Suggests:
+ swww,
+ sway,
+ niri,
+ hyprland
+Description: terminal-based greeter for greetd
+ sysc-greet is a TUI greeter for greetd written in Go.
+ It runs inside a terminal emulator and supports theming,
+ fonts, wallpapers, and animated backgrounds.
+ .
+ A Wayland compositor is required at runtime, but no specific
+ compositor is enforced. Optional background daemons such as
+ gSlapper or swww can be used for wallpapers and videos.
+
+Package: sysc-greet-configs
+Architecture: all
+Depends: sysc-greet
+Description: Example greeter configs for sysc-greet
+ Example compositor and terminal configs for running sysc-greet
+ with greetd (niri, sway, kitty).
+ .
+ These files are installed as examples under:
+   /usr/share/sysc-greet/configs
+ and must be copied manually into /etc/greetd or ~/.config.
+
