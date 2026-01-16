@@ -32,8 +32,18 @@ jobs:
       - name: Build if needed
         run: |
           scripts/build.sh "${{ steps.version.outputs.version }}"
-
-      - name: Upload artifacts
+     
+      - name: Check for build artifacts
+        id: artifacts
+        run: |
+          if ls build/*.deb 1>/dev/null 2>&1; then
+            echo "found=true" >> $GITHUB_OUTPUT
+          else
+            echo "found=false" >> $GITHUB_OUTPUT
+          fi
+          
+      - name: Upload Debian packages
+        if: steps.artifacts.outputs.found == 'true'
         uses: actions/upload-artifact@v4
         with:
           name: sysc-greet-debs
@@ -41,6 +51,7 @@ jobs:
             build/*.deb
             build/*.changes
             build/*.buildinfo
+
 
       - name: Commit version bump
         if: success()
@@ -50,6 +61,7 @@ jobs:
           git add .last-built-version config || true
           git commit -m "Build sysc-greet ${{ steps.version.outputs.version }}" || true
           git push || true
+          
       - name: Create GitHub Release
         if: success()
         uses: softprops/action-gh-release@v2
