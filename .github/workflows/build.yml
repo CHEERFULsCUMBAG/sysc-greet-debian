@@ -32,9 +32,9 @@ jobs:
           VERSION=$(scripts/update-upstream.sh)
           echo "version=$VERSION" >> $GITHUB_OUTPUT
 
-        - name: Build if needed
+      - name: Build if needed
         run: |
-            bash scripts/build.sh "${{ steps.version.outputs.version }}"
+          bash scripts/build.sh "${{ steps.version.outputs.version }}"
 
       - name: Check for build artifacts
         id: artifacts
@@ -60,9 +60,9 @@ jobs:
         run: |
           git config user.name "github-actions"
           git config user.email "github-actions@github.com"
-          git add .last-built-version config || true
+          git add .last-built-version config
           git commit -m "Build sysc-greet ${{ steps.version.outputs.version }}" || true
-          git push || true
+          git push
 
       - name: Create GitHub Release
         if: steps.artifacts.outputs.found == 'true'
