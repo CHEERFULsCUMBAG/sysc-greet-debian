@@ -1,0 +1,6 @@
+sysc-greet                  usr/bin/
+
+fonts/*                           usr/share/sysc-greet/fonts/
+wallpapers/*                usr/share/sysc-greet/wallpapers/
+ascii_configs/*             usr/share/sysc-greet/ascii_configs/
+
