@@ -32,7 +32,7 @@ jobs:
       - name: Build if needed
         run: |
           scripts/build.sh "${{ steps.version.outputs.version }}"
-     
+
       - name: Check for build artifacts
         id: artifacts
         run: |
@@ -41,7 +41,7 @@ jobs:
           else
             echo "found=false" >> $GITHUB_OUTPUT
           fi
-          
+
       - name: Upload Debian packages
         if: steps.artifacts.outputs.found == 'true'
         uses: actions/upload-artifact@v4
@@ -60,17 +60,19 @@ jobs:
           git add .last-built-version config || true
           git commit -m "Build sysc-greet ${{ steps.version.outputs.version }}" || true
           git push || true
-          
+
       - name: Create GitHub Release
         if: steps.artifacts.outputs.found == 'true'
         uses: softprops/action-gh-release@v2
         with:
           tag_name: "v${{ steps.version.outputs.version }}"
           name: "sysc-greet ${{ steps.version.outputs.version }}"
-          files: |
-            build/*.deb
-            build/*.changes
-            build/*.buildinfo
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          body: |
+            Automated Debian packages for sysc-greet ${{ steps.version.outputs.version }}.
 
+            Includes:
+            - sysc-greet
+            - sysc-greet-configs
+
+            Built automatically from upstream tag v${{ steps.version.outputs.version }}.
+          files: |
