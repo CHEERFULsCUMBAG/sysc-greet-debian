@@ -76,3 +76,8 @@ jobs:
 
             Built automatically from upstream tag v${{ steps.version.outputs.version }}.
           files: |
+            build/*.deb
+            build/*.changes
+            build/*.buildinfo
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

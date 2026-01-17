@@ -3,28 +3,36 @@ set -euo pipefail
 
 VERSION="$1"
 ROOT="$(pwd)"
+WORKDIR="$ROOT/build"
 LAST_BUILT_FILE="$ROOT/.last-built-version"
 
-LAST_BUILT="$(cat "$LAST_BUILT_FILE")"
+# CI-safe default
+LAST_BUILT="none"
+if [[ -f "$LAST_BUILT_FILE" ]]; then
+  LAST_BUILT="$(cat "$LAST_BUILT_FILE")"
+fi
 
-if [ "$VERSION" = "$LAST_BUILT" ]; then
+if [[ "$VERSION" == "$LAST_BUILT" ]]; then
   echo "Upstream version $VERSION already built — exiting"
   exit 0
 fi
 
-echo "Building sysc-greet $VERSION"
+echo "==> Building sysc-greet $VERSION"
 
-# Update configs first
+# Update bundled configs
 scripts/update-configs.sh
 
-WORKDIR="$ROOT/build"
 rm -rf "$WORKDIR"
 mkdir -p "$WORKDIR"
 cd "$WORKDIR"
 
-git clone --branch "v$VERSION" --depth 1 https://github.com/Nomadcxx/sysc-greet.git sysc-greet
+echo "==> Cloning sysc-greet"
+git clone --branch "v$VERSION" --depth 1 \
+  https://github.com/Nomadcxx/sysc-greet.git sysc-greet
+
 cd sysc-greet
 
+echo "==> Injecting debian/ and config/"
 cp -r "$ROOT/debian" .
 cp -r "$ROOT/config" .
 
@@ -33,9 +41,15 @@ sed \
   -e "s/@VERSION@/${VERSION}/" \
   -e "s/@DATE@/${DATE}/" \
   debian/changelog.in > debian/changelog
-
 rm debian/changelog.in
 
+echo "==> Building Debian packages"
 dpkg-buildpackage -us -uc
 
+echo "==> Collecting artifacts"
+mv ../*.deb ../*.changes ../*.buildinfo "$WORKDIR"
+
 echo "$VERSION" > "$LAST_BUILT_FILE"
+
+echo "==> Build artifacts:"
+ls -lh "$WORKDIR"
