@@ -46,8 +46,8 @@ rm debian/changelog.in
 echo "==> Building Debian packages"
 dpkg-buildpackage -us -uc
 
-echo "==> Collecting artifacts"
-mv ../*.deb ../*.changes ../*.buildinfo "$WORKDIR"
+echo "==> Artifacts already in build/ — skipping move"
+ls -lh "$WORKDIR"/*.deb "$WORKDIR"/*.changes "$WORKDIR"/*.buildinfo
 
 echo "$VERSION" > "$LAST_BUILT_FILE"
 
