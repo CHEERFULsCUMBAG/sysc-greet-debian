@@ -1,5 +1,8 @@
 name: Build sysc-greet Debian packages
 
+permissions:
+  contents: write
+
 on:
   workflow_dispatch:
   schedule:
@@ -29,9 +32,9 @@ jobs:
           VERSION=$(scripts/update-upstream.sh)
           echo "version=$VERSION" >> $GITHUB_OUTPUT
 
-      - name: Build if needed
+        - name: Build if needed
         run: |
-          scripts/build.sh "${{ steps.version.outputs.version }}"
+            bash scripts/build.sh "${{ steps.version.outputs.version }}"
 
       - name: Check for build artifacts
         id: artifacts
