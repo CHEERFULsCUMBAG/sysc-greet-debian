@@ -1,6 +1,11 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+echo "### RUNNING scripts/build.sh from COMMIT:"
+git rev-parse HEAD
+sed -n '1,200p' "$0"
+echo "### END build.sh dump"
+
 VERSION="$1"
 ROOT="$(pwd)"
 WORKDIR="$ROOT/build"
